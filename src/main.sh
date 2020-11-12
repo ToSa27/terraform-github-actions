@@ -75,22 +75,15 @@ EOF
 
 function configureGitCredentials {
   if [[ ! -z "${GH_USER}" ]] && [[ ! -z "${GH_PASS}" ]]; then
-    cat > ${HOME}/.git-credentials << EOF
-https://${GH_USER}:${GH_PASS}@github.com/
+    export GIT_CONFIG=$PWD/.gitconfig
+    git config credential.helper "store --file=$GIT_CONFIG"
+    git config credential.https://github.com.username $GH_USER
+    cat > $PWD/git_askpass.sh << EOF
+#!/bin/bash
+echo $GH_PASS
 EOF
-
-    currRules=$(git config --global --get-all "url.https://github.com/.insteadOf")
-    git config --global credential.helper store
-
-    sshRule="ssh://git@github.com/"
-    if [[ $currRules != *"$sshRule"* ]]; then
-      git config --global --add "url.https://github.com/.insteadOf" "$sshRule"
-    fi
-
-    gitRule="git@github.com:"
-    if [[ $currRules != *"$gitRule"* ]]; then
-      git config --global --add "url.https://github.com/.insteadOf" "$gitRule"
-    fi
+    chmod +x $PWD/git_askpass.sh
+    export GIT_ASKPASS=$PWD/git_askpass.sh
   fi
 }
 
