@@ -76,14 +76,22 @@ EOF
 function configureGitCredentials {
   if [[ ! -z "${GH_USER}" ]] && [[ ! -z "${GH_PASS}" ]]; then
     export GIT_CONFIG=$PWD/.gitconfig
+    echo "GIT_CONFIG = $GIT_CONFIG"
     git config credential.helper "store --file=$GIT_CONFIG"
     git config credential.https://github.com.username $GH_USER
+    echo ".gitconfig:"
+    cat $GIT_CONFIG
+    echo ".gitconfig end"
     cat > $PWD/git_askpass.sh << EOF
 #!/bin/bash
 echo $GH_PASS
 EOF
     chmod +x $PWD/git_askpass.sh
+    echo ".git_askpass:"
+    cat $PWD/git_askpass.sh
+    echo ".git_askpass end"
     export GIT_ASKPASS=$PWD/git_askpass.sh
+    echo "GIT_ASKPASS = $GIT_ASKPASS"
   fi
 }
 
@@ -131,7 +139,7 @@ function main {
   source ${scriptDir}/terraform_destroy.sh
 
   parseInputs
-  echo "ToSa27 terraform github action v20201112"
+  echo "ToSa27 terraform github action v20201112-2"
   configureCLICredentials
   configureGitCredentials
   cd ${GITHUB_WORKSPACE}/${tfWorkingDir}
