@@ -131,6 +131,7 @@ function main {
   source ${scriptDir}/terraform_destroy.sh
 
   parseInputs
+  echo "ToSa27 terraform github action v20201112"
   configureCLICredentials
   configureGitCredentials
   cd ${GITHUB_WORKSPACE}/${tfWorkingDir}
